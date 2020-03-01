@@ -1,0 +1,8 @@
+/coverage
+/.coverage
+__pycache__
+.mypy_cache
+.nox
+.venv
+.vscode
+*.pyc
