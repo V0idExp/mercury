@@ -1,8 +1,10 @@
-import pytest
-from .. import world
-from unittest.mock import Mock
-from itertools import count
 from dataclasses import dataclass
+from itertools import count
+from unittest.mock import Mock
+
+import pytest
+
+from .. import world
 
 
 @pytest.fixture
@@ -38,11 +40,11 @@ def test_entity_empty(mocker: Mock):
 def test_entity_w_components(mocker):
 
     @dataclass
-    class ProgressComponent:
+    class Progress:
         value: float = 0
 
     @dataclass
-    class SpriteComponent:
+    class Sprite:
         path: str = 'resources/no_sprite.png'
 
     comp_added = mocker.Mock()
@@ -55,37 +57,32 @@ def test_entity_w_components(mocker):
     ###
     # entity creation with components
     ###
-    components = {
-        'player': SpriteComponent(),
-        'weapon': SpriteComponent(),
-        'progress': ProgressComponent(),
-    }
+    components = [Sprite, Progress]
 
-    e = w.add_entity(name='player', components=dict(components))
+    e = w.add_entity('player', (comp_cls() for comp_cls in components))
     comp_added.assert_called()
 
-    for call_args in comp_added.call_args_list:
-        target_entity, comp_attr, comp_obj = call_args[0]
+    for i, call_args in enumerate(comp_added.call_args_list):
+        target_entity, comp_obj = call_args[0]
         assert target_entity.uid == e.uid
-        assert isinstance(comp_obj, type(components[comp_attr]))
+        assert isinstance(comp_obj, components[i])
 
-    added_components = {call_args[0][1] for call_args in comp_added.call_args_list}
-    assert added_components == set(components.keys())
+    added_components = {type(call_args[0][1]) for call_args in comp_added.call_args_list}
+    assert added_components == set(components)
 
     ###
     # entity testing
     ###
-    assert e.player.path == 'resources/no_sprite.png'
-    assert e.progress.value == 0.0
+    assert e[Sprite].path == 'resources/no_sprite.png'
+    assert e[Progress].value == 0.0
 
     ###
     # component destruction
     ###
-    for comp_attr in components:
-        e.del_component(comp_attr)
-        comp_deleted.assert_called_once()
-        assert comp_deleted.call_args[0][1] == comp_attr
-        comp_deleted.reset_mock()
+    w.del_entity(e.uid)
+    comp_deleted.assert_called()
+    assert comp_deleted.call_count == 2
+    assert set(type(call_args[0][1]) for call_args in comp_deleted.call_args_list) == set(components)
 
 
 @pytest.mark.usefixtures('count_from_one')
@@ -102,37 +99,40 @@ def test_entity_dynamic_component_add_del(mocker):
     comp_added.assert_not_called()
 
     ###
-    # Test some valid components
+    # Test component add
     ###
-    e.add_component('some_int', 123)
-    e.add_component('some_bool', True)
+    e.add_component(5)
+    e.add_component(False)
+    e.add_component('hello')
 
-    assert e.some_int == 123
-    assert e.some_bool
+    assert e[int] == 5
+    assert not e[bool]
+    assert e[str] == 'hello'
+    assert {int, bool, str} == set(e.components.keys())
 
     comp_added.assert_called()
-    assert comp_added.call_count == 2
+    assert comp_added.call_count == 3
 
     ###
-    # Test add of invalid components
+    # Test adding of already present components
     ###
     with pytest.raises(world.ComponentError):
-        e.add_component('name', str)
+        e.add_component(3)
 
     with pytest.raises(world.ComponentError):
-        e.add_component('some_int', str)
+        e.add_component(True)
 
     ###
     # Test component removal
     ###
-    e.del_component('some_int')
+    e.del_component(int)
     comp_deleted.assert_called_once()
 
-    with pytest.raises(AttributeError):
-        e.some_int
-
     with pytest.raises(world.ComponentError):
-        e.del_component('some_nonexisting_comp')
+        e.del_component(float)
 
+    ###
+    # Test access of undefined components
+    ###
     with pytest.raises(world.ComponentError):
-        e.del_component('name')
+        e[dict]

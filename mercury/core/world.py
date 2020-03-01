@@ -1,6 +1,9 @@
-from .event import Event
+from copy import copy
 from itertools import count
-from typing import Union, Any, cast, Mapping, Dict
+from typing import (Any, Callable, Dict, Generator, Mapping, Sequence, Union,
+                    cast)
+
+from .event import Event
 
 
 class ComponentError(Exception):
@@ -13,7 +16,7 @@ class Entity:
         self.__world = world
         self.__id = uid
         self.__name = name
-        self.__components: Dict[str, Any] = {}
+        self.__components: Dict[type, Any] = {}
 
     @property
     def uid(self):
@@ -23,29 +26,35 @@ class Entity:
     def name(self):
         return self.__name
 
-    def add_component(self, attr: str, comp: Any):
-        if hasattr(self, attr):
-            raise ComponentError(f'attribute "{attr}" already exists')
+    def add_component(self, comp: type) -> Any:
+        comp_type = type(comp)
+        if comp_type in self.__components:
+            raise ComponentError(f'{self} already has a component of type "{comp_type.__name__}"')
 
-        self.__components[attr] = comp
-        setattr(self, attr, comp)
-        self.__world.on_entity_component_add(self, attr, comp)
+        self.__components[comp_type] = comp
+        self.__world.on_entity_component_add(self, comp)
+        return comp
 
-    def del_component(self, attr: str) -> Any:
-        if not hasattr(self, attr):
-            raise ComponentError(f'attribute "{attr}" does not exist')
-        elif attr in ('uid', 'name', 'components'):
-            raise ComponentError(f'invalid attribute name "{attr}"')
+    def del_component(self, comp_type: type) -> Any:
+        if comp_type not in self.__components:
+            raise ComponentError(f'{self} does not have a component of type "{comp_type.__name__}"')
 
-        self.__world.on_entity_component_del(self, attr, getattr(self, attr))
-
-        comp = self.__components.pop(attr)
-        delattr(self, attr)
+        comp = self.__components[comp_type]
+        self.__world.on_entity_component_del(self, comp)
+        self.__components.pop(comp_type)
         return comp
 
     @property
-    def components(self) -> Mapping[str, Any]:
-        return dict(**self.__components)
+    def components(self) -> Mapping[type, Any]:
+        return copy(self.__components)
+
+    def __repr__(self) -> str:
+        return f'Entity(world={id(self.__world)}, uid={self.__id}, name={self.__name})'
+
+    def __getitem__(self, comp_type: type) -> Any:
+        if comp_type not in self.__components:
+            raise ComponentError(f'{self} does not have a component of type "{comp_type.__name__}"')
+        return self.__components[comp_type]
 
 
 class World:
@@ -59,14 +68,13 @@ class World:
         self.__entities = {}
         self.__id_gen = count(1000)
 
-    def add_entity(self, name: str = '', components: Mapping[str, Any] = None):
+    def add_entity(self, name: str = '', components: Sequence[type] = None) -> Entity:
         entity = Entity(self, uid=next(self.__id_gen), name=name)
         self.__entities[entity.uid] = entity
         self.on_entity_add(entity)
 
-        if components is not None:
-            for attr, value in components.items():
-                entity.add_component(attr, value)
+        for comp in components or ():
+            entity.add_component(comp)
 
         return entity
 
@@ -78,9 +86,16 @@ class World:
 
         entity = cast(Entity, entity)
 
-        for attr in entity.components:
-            entity.del_component(attr)
+        for comp_type in entity.components:
+            entity.del_component(comp_type)
 
         self.on_entity_del(entity)
 
-        return entity
+    def del_entities(self):
+        for uid in list(self.__entities):
+            self.del_entity(uid)
+
+    def query_entities(self, filter: Callable[[Entity], bool]) -> Generator[Entity, None, None]:
+        for entity in self.__entities.values():
+            if filter(entity):
+                yield entity

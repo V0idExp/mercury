@@ -1,5 +1,6 @@
-from ..event import Event
 from unittest.mock import Mock
+
+from ..event import Event
 
 
 def test_event_sub_unsub(mocker: Mock):
