@@ -52,8 +52,6 @@ class SpriteRenderSystem(System):
                 sprite.x = component.x
                 sprite.y = component.y
 
-        renderer.render()
-
     @inject.autoparams()
     def __create_sprite(self, entity: Entity, component: SpriteComponent, loader: SpriteLoader,
                         renderer: SpriteRenderer):

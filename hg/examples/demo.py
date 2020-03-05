@@ -17,6 +17,9 @@ from hg.res.loaders.sprite_sheet_loader import SpriteSheetLoader
 ROOT_DIR = os.path.abspath(os.path.dirname(__package__))
 
 
+TICK_TIME = 10  # 10ms = 100Hz period
+
+
 def config(renderer: sdl2.SDL_Renderer, binder: inject.Binder):
     binder.bind(ImageLoader, ImageLoader(renderer))
     binder.bind(SpriteSheetLoader, SpriteSheetLoader())
@@ -53,22 +56,37 @@ if __name__ == '__main__':
 
     inject.configure(partial(config, renderer.sdlrenderer))
 
+    sprite_renderer = inject.instance(SpriteRenderer)
+
     w = World()
     systems = setup_systems(w)
     populate_world(w)
 
+    tick = 0
+    last_frame_time = sdl2.SDL_GetTicks()
+    time_acc = 0
     run = True
     while run:
-        events = sdl2.ext.get_events()
-        for event in events:
-            if event.type == sdl2.SDL_QUIT:
-                run = False
-                break
-
         renderer.clear()
 
-        systems.tick_all()
+        now = sdl2.SDL_GetTicks()
+        time_acc += now - last_frame_time
+        last_frame_time = now
 
+        while time_acc >= TICK_TIME:
+            time_acc -= TICK_TIME
+
+            events = sdl2.ext.get_events()
+            for event in events:
+                if event.type == sdl2.SDL_QUIT:
+                    run = False
+                    break
+
+            systems.tick_all()
+
+            tick += 1
+
+        sprite_renderer.render()
         renderer.present()
         window.refresh()
 

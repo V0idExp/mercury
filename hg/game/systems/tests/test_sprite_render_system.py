@@ -23,7 +23,6 @@ def test_sprite_tracking(mocker):
     comp_deleted = mocker.spy(sprite_sys, 'on_entity_component_deleted')
     sprite_add = mocker.spy(renderer, 'add_sprite')
     sprite_remove = mocker.spy(renderer, 'remove_sprite')
-    render = mocker.spy(renderer, 'render')
 
     assert len(renderer.sprites) == 0
 
@@ -61,7 +60,6 @@ def test_sprite_tracking(mocker):
     sysreg.tick_all()
     assert len(renderer.sprites) == 1
     sprite_add.assert_called_once()
-    render.assert_called()
 
     # destroy the entity, the sprite should be destroyed as well
     w.del_entity(e)
