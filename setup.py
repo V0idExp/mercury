@@ -12,7 +12,7 @@ setuptools.setup(
     description='A lightweight game development middleware',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='',
+    url='https://github.com/V0idExp/mercury',
     packages=setuptools.find_packages(
         exclude=["*.tests", "*.tests.*", "tests.*", "tests"]
     ),
