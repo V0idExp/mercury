@@ -73,6 +73,9 @@ def test_entity_w_components(mocker):
     ###
     # entity testing
     ###
+    assert Sprite in e
+    assert Progress in e
+    assert float not in e
     assert e[Sprite].path == 'resources/no_sprite.png'
     assert e[Progress].value == 0.0
 

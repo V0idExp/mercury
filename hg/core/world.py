@@ -56,6 +56,9 @@ class Entity:
             raise ComponentError(f'{self} does not have a component of type "{comp_type.__name__}"')
         return self.__components[comp_type]
 
+    def __contains__(self, comp_type: type) -> bool:
+        return comp_type in self.__components
+
 
 class World:
 
