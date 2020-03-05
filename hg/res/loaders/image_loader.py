@@ -2,7 +2,7 @@ import os
 
 import sdl2
 
-from mercury.gfx.sprite_renderer.sprite import Image
+from hg.gfx.sprite_renderer.sprite import Image
 
 from .loader import Loader
 

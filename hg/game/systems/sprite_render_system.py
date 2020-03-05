@@ -2,10 +2,10 @@ from copy import copy
 
 import inject
 
-from mercury.core.system import System
-from mercury.core.world import Entity, World
-from mercury.gfx.sprite_renderer.renderer import SpriteRenderer
-from mercury.res.loaders.sprite_loader import SpriteLoader
+from hg.core.system import System
+from hg.core.world import Entity, World
+from hg.gfx.sprite_renderer.renderer import SpriteRenderer
+from hg.res.loaders.sprite_loader import SpriteLoader
 
 from ..components.sprite_component import SpriteComponent
 

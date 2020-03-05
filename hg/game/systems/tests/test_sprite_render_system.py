@@ -2,9 +2,9 @@ import os
 
 import inject
 
-from mercury.core.system import SystemRegistry
-from mercury.core.world import World
-from mercury.gfx.sprite_renderer.renderer import SpriteRenderer
+from hg.core.system import SystemRegistry
+from hg.core.world import World
+from hg.gfx.sprite_renderer.renderer import SpriteRenderer
 
 from ..sprite_render_system import SpriteComponent, SpriteRenderSystem
 
@@ -15,7 +15,7 @@ def test_sprite_tracking(mocker):
     sprite_sys = SpriteRenderSystem()
     sysreg.register_system(sprite_sys)
     renderer = inject.instance(SpriteRenderer)
-    base_dir = os.path.join(os.getcwd(), 'mercury', 'res', 'loaders', 'tests')
+    base_dir = os.path.join(os.getcwd(), 'hg', 'res', 'loaders', 'tests')
     resource0 = os.path.join(base_dir, 'test_sprite_0.xml')
     resource1 = os.path.join(base_dir, 'test_sprite_1.xml')
 

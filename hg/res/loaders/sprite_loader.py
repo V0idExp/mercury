@@ -3,7 +3,7 @@ import os
 import inject
 from lxml import etree
 
-from mercury.gfx.sprite_renderer.sprite import Sprite
+from hg.gfx.sprite_renderer.sprite import Sprite
 
 from .loader import Loader
 from .sprite_sheet_loader import SpriteSheetLoader

@@ -1,6 +1,6 @@
 import inject
 import os
-from mercury.gfx.sprite_renderer.sprite import Image
+from hg.gfx.sprite_renderer.sprite import Image
 
 from ..loader import Loader
 from ..image_loader import ImageLoader

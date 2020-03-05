@@ -5,14 +5,14 @@ import inject
 import sdl2
 import sdl2.ext
 
-from mercury.core.system import SystemRegistry
-from mercury.core.world import World
-from mercury.game.components.sprite_component import SpriteComponent
-from mercury.game.systems.sprite_render_system import SpriteRenderSystem
-from mercury.gfx.sprite_renderer.renderer import SpriteRenderer
-from mercury.res.loaders.image_loader import ImageLoader
-from mercury.res.loaders.sprite_loader import SpriteLoader
-from mercury.res.loaders.sprite_sheet_loader import SpriteSheetLoader
+from hg.core.system import SystemRegistry
+from hg.core.world import World
+from hg.game.components.sprite_component import SpriteComponent
+from hg.game.systems.sprite_render_system import SpriteRenderSystem
+from hg.gfx.sprite_renderer.renderer import SpriteRenderer
+from hg.res.loaders.image_loader import ImageLoader
+from hg.res.loaders.sprite_loader import SpriteLoader
+from hg.res.loaders.sprite_sheet_loader import SpriteSheetLoader
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__package__))
 
@@ -38,7 +38,7 @@ def populate_world(w: World):
         SpriteComponent(
             x=50,
             y=90,
-            resource=os.path.join(ROOT_DIR, 'mercury', 'res', 'loaders', 'tests', 'test_sprite_0.xml')
+            resource=os.path.join(ROOT_DIR, 'hg', 'res', 'loaders', 'tests', 'test_sprite_0.xml')
         ),
     ))
 
