@@ -4,6 +4,7 @@ import setuptools
 with open('README.md', 'r') as fo:
     long_description = fo.read()
 
+
 setuptools.setup(
     name='mercury',
     version='0.1',
@@ -13,15 +14,16 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/V0idExp/mercury',
-    packages=setuptools.find_packages(
-        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]
-    ),
+    packages=setuptools.find_packages(exclude=['*.examples', '*.tests']),
     install_requires=[
         'Inject>=4.1.1',
         'lxml>=4.5.0',
-        'PySDL2==0.9.7',
-        'pysdl2-dll==2.0.10',
+        'PySDL2>=0.9.7',
+        'pysdl2-dll>=2.0.10',
     ],
+    package_data={
+        'hg': ['res/loaders/*.xsd']
+    },
     classifiers=[
         'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: MIT License',
