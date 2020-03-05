@@ -26,7 +26,7 @@ class Entity:
     def name(self):
         return self.__name
 
-    def add_component(self, comp: type) -> Any:
+    def add_component(self, comp) -> Any:
         comp_type = type(comp)
         if comp_type in self.__components:
             raise ComponentError(f'{self} already has a component of type "{comp_type.__name__}"')
@@ -68,7 +68,7 @@ class World:
         self.__entities = {}
         self.__id_gen = count(1000)
 
-    def add_entity(self, name: str = '', components: Sequence[type] = None) -> Entity:
+    def add_entity(self, name: str = '', components: Sequence = None) -> Entity:
         entity = Entity(self, uid=next(self.__id_gen), name=name)
         self.__entities[entity.uid] = entity
         self.on_entity_add(entity)
@@ -99,3 +99,6 @@ class World:
         for entity in self.__entities.values():
             if filter(entity):
                 yield entity
+
+    def __getitem__(self, uid) -> Entity:
+        return self.__entities[uid]

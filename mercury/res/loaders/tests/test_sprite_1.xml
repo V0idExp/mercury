@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sprite sheet="test_sprite_sheet.xml" duration="0.5" loop="false">
+    <frame>plane0</frame>
+    <frame>plane1</frame>
+    <frame>plane2</frame>
+</sprite>

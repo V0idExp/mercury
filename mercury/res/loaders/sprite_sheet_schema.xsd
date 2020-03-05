@@ -1,0 +1,30 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="TextureAtlas" type="TextureAtlasType"/>
+
+  <!-- Texture atlas root element -->
+  <xs:complexType name="TextureAtlasType">
+    <xs:sequence>
+      <xs:element name="SubTexture" type="SubTextureType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="imagePath" type="NameType"/>
+  </xs:complexType>
+
+  <!-- Sub texture frame -->
+  <xs:complexType name="SubTextureType">
+    <xs:attribute name="name" type="NameType"/>
+    <xs:attribute name="x" type="xs:integer"/>
+    <xs:attribute name="y" type="xs:integer"/>
+    <xs:attribute name="width" type="xs:integer"/>
+    <xs:attribute name="height" type="xs:integer"/>
+  </xs:complexType>
+
+  <!-- Non-empty and stripped of whitespace string, suitable as identifier or path -->
+  <xs:simpleType name="NameType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

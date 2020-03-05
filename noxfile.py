@@ -10,7 +10,7 @@ COVERAGE_VER = 'coverage>=5.0.3'
 @nox.session
 def tests(session):
     """Run tests."""
-    session.install(PYTEST_VER, PYTEST_MOCK_VER)
+    session.install('-r', 'requirements.txt')
     session.run('pytest')
 
 
@@ -24,6 +24,6 @@ def codestyle(session):
 @nox.session
 def coverage(session):
     """Run the tests and collect the code coverage statistics."""
-    session.install(PYTEST_VER, PYTEST_MOCK_VER, COVERAGE_VER)
+    session.install('-r', 'requirements.txt')
     session.run('coverage', 'run', '--source', 'mercury', '-m', 'pytest')
     session.run('coverage', 'html', '-d', 'coverage')
