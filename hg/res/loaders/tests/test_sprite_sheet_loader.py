@@ -1,8 +1,11 @@
 import os
 
+import pytest
+
 from ..sprite_sheet_loader import SpriteSheetLoader
 
 
+@pytest.mark.inject()
 def test_load_spritesheet():
     loader = SpriteSheetLoader()
 

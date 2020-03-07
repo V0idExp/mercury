@@ -48,6 +48,9 @@ class Entity:
     def components(self) -> Mapping[type, Any]:
         return copy(self.__components)
 
+    def has_components(self, *comp_types) -> bool:
+        return all(comp_type in self for comp_type in comp_types)
+
     def __repr__(self) -> str:
         return f'Entity(world={id(self.__world)}, uid={self.__id}, name={self.__name})'
 

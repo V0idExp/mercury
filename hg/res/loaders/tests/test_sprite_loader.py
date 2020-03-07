@@ -1,8 +1,9 @@
 import os
-
+import pytest
 from ..sprite_loader import SpriteLoader
 
 
+@pytest.mark.inject()
 def test_load_sprite():
     loader = SpriteLoader()
 

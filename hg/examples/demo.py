@@ -7,7 +7,11 @@ import sdl2.ext
 
 from hg.core.system import SystemRegistry
 from hg.core.world import World
+from hg.game.components.body_component import BodyComponent
+from hg.game.components.position_component import PositionComponent
 from hg.game.components.sprite_component import SpriteComponent
+from hg.game.settings import Settings
+from hg.game.systems.physics_system import PhysicsSystem
 from hg.game.systems.sprite_render_system import SpriteRenderSystem
 from hg.gfx.sprite_renderer.renderer import SpriteRenderer
 from hg.res.loaders.image_loader import ImageLoader
@@ -17,14 +21,12 @@ from hg.res.loaders.sprite_sheet_loader import SpriteSheetLoader
 ROOT_DIR = os.path.abspath(os.path.dirname(__package__))
 
 
-TICK_TIME = 10  # 10ms = 100Hz period
-
-
 def config(renderer: sdl2.SDL_Renderer, binder: inject.Binder):
     binder.bind(ImageLoader, ImageLoader(renderer))
     binder.bind(SpriteSheetLoader, SpriteSheetLoader())
     binder.bind(SpriteLoader, SpriteLoader())
     binder.bind(SpriteRenderer, SpriteRenderer(renderer))
+    binder.bind(Settings, Settings())
 
 
 def setup_systems(w: World) -> SystemRegistry:
@@ -33,16 +35,19 @@ def setup_systems(w: World) -> SystemRegistry:
     # sprite render system
     reg.register_system(SpriteRenderSystem())
 
+    # physics system
+    reg.register_system(PhysicsSystem())
+
     return reg
 
 
 def populate_world(w: World):
     w.add_entity('plane', components=(
+        PositionComponent(50, 90),
         SpriteComponent(
-            x=50,
-            y=90,
             resource=os.path.join(ROOT_DIR, 'hg', 'res', 'loaders', 'tests', 'test_sprite_0.xml')
         ),
+        BodyComponent(),
     ))
 
 
@@ -63,6 +68,7 @@ if __name__ == '__main__':
     populate_world(w)
 
     tick = 0
+    tick_time = inject.instance(Settings).physics_time_step * 1000
     last_frame_time = sdl2.SDL_GetTicks()
     time_acc = 0
     run = True
@@ -73,8 +79,8 @@ if __name__ == '__main__':
         time_acc += now - last_frame_time
         last_frame_time = now
 
-        while time_acc >= TICK_TIME:
-            time_acc -= TICK_TIME
+        while time_acc >= tick_time:
+            time_acc -= tick_time
 
             events = sdl2.ext.get_events()
             for event in events:

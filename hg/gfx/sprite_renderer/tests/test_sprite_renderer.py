@@ -63,6 +63,7 @@ def test_empty_sprite(mocker, spritesheet, blit_mock, time_mock):
     assert play.call_count == 10
 
 
+@pytest.mark.inject()
 def test_sprite_play_once(mocker, spritesheet, blit_mock, time_mock):
     rndr = renderer.SpriteRenderer(mocker.Mock())
     sprite = Sprite(
@@ -111,6 +112,7 @@ def test_sprite_play_once(mocker, spritesheet, blit_mock, time_mock):
     blit_mock.assert_not_called()
 
 
+@pytest.mark.inject()
 def test_sprite_play_loop(mocker, spritesheet, blit_mock, time_mock):
     rndr = renderer.SpriteRenderer(mocker.Mock())
     sprite = Sprite(
